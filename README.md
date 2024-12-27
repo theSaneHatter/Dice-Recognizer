@@ -24,5 +24,5 @@
 ###   After sorting the list based on color, you can try and look for simolar colors that have
 ###    simolar locations in their y,x. 
 
-##There need be little more work done on this project to get it to work. I just dont have the
-##time rn, cuz im going to mex for break. I might have time tmmr. 
+## There need be little more work done on this project to get it to work. I just dont have the
+## time rn, cuz im going to mex for break. I might have time tmmr. 
