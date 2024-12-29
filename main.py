@@ -7,7 +7,7 @@ start = time.time()
 #purple is ~90,0,70
 #green ~90,115,0
 
-Dice1 = Image.open('./assets/Black_strip_copy.jpg') 
+Dice1 = Image.open('./assets/Dice1.jpg') 
 
 
 # resize 

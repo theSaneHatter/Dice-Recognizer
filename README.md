@@ -23,5 +23,6 @@
 ## How i think it should be done:
 ###   After sorting the list based on color, you can try and look for simolar colors that have
 ###    simolar locations in their y,x. 
-
+## 12/28 update:
+I relized there needs to be a new fn to make the 5th index the frequency of the picel
 

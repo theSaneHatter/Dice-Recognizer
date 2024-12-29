@@ -15,20 +15,54 @@ def mean_dif(a,b):
 
 
 
+def pixel_list_mode(pixels_with_location,dimen=None):
+    array = pixels_with_location.copy()
+    array = array.reshape(-1,6)
+    array[:,5] = 0
+    array = array[np.argsort(array[:,5])]
+    array = array[::-1]
 
-array = np.random.randint(0,10,size=(50,3,6))
-array = array.reshape(-1,6)
+    for j in array:
+        for k in array:
+            if np.array_equal(j[:2], k[:2]):
+                j[5] += 1
 
-#takes [[r,g,b,h,w,occurances]] 
-#sorts by r,g,b
-def sort_by_color(pixel):
-    # calculate similarity btwn each pixel and the first pixel
-    similarities = [mean_dif(pixel[:3], array[0, :3]) for pixel in array]
+    # cleaned_array = cleaned_array.reshape(array.shape)    
+    array = np.unique(array, axis=0)
 
-    #sort pixels based on similarity
-    sorted_indices = np.argsort(similarities)
-    sorted_array = array[sorted_indices]
-    sorted_array = sorted_array.reshape(50,3,6)
-    print(sorted_array)
 
-print(sort_by_color(array))
+    array = array[np.argsort(array[:, 5])]
+    array = array[::-1]
+
+    if dimen != None:
+        return array[:dimen, :]
+    else:
+        return array
+
+
+
+
+
+array = np.random.randint(0,10,size=(10,3,6))
+#array = array.reshape(-1,6)
+
+
+#takes r,g,b,h,w,occ list genorated by give_pixels_location() and pixel_list_mode
+def sort_pixels_by_mode(pixels_with_loc, modes_given=False):
+    
+    mode = pixel_list_mode(pixels_with_loc)
+    sorted_array = pixels_with_loc.copy()
+    sorted_array = sorted_array.reshape(-1,6)
+    sorted_array = sorted_array[np.argsort(sorted_array[:,5])]
+    sorted_array = sorted_array[::-1]
+    sorted_array = sorted_array.reshape(pixels_with_loc.shape)
+
+    # for j in range(len(mode)):
+    #     for k in range(len(pixels_with_loc)):
+    #         if np.array_equal(mode[j,:], pixels_with_loc[k,:]):
+    #             sorted = np.concatenate((array, pixels_with_loc[k].reshape(1, -1)), axis=0)
+    print('sorted_array', sorted_array)
+    print('pixels_with_loc.shape:',pixels_with_loc.shape)
+    print('sorted.shape',sorted_array.shape)
+
+sort_pixels_by_mode(array)

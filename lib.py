@@ -100,6 +100,7 @@ def pixel_list_mode_old(list_arg, dimen=1):
 #takes pixels_with_location, r,g,b,h,w,0
 #takes np list of pixels, r,g,b, and manipulates their list so that 
 #the 6th value in the rgb list is the frequency of the r,g,b
+#this dude removes duplacates, so gutta fix that
 def pixel_list_mode(pixels_with_location,dimen=None):
     array = pixels_with_location.copy()
     array = array.reshape(-1,6)
