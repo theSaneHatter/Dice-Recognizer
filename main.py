@@ -13,7 +13,7 @@ Dice1 = Image.open('./assets/Dice1.jpg')
 # resize 
 print(Dice1.size)
 h,w = Dice1.size
-h,w = round(h/30),round(w/30)
+h,w = round(h/1),round(w/1)
 print('new size' , h,w)
 size = (h,w)
 Dice1 = Dice1.resize(size)

@@ -98,9 +98,9 @@ def pixel_list_mode_old(list_arg, dimen=1):
 
 
 #takes pixels_with_location, r,g,b,h,w,0
-#takes np list of pixels, r,g,b, and manipulates their list so that 
-#the 6th value in the rgb list is the frequency of the r,g,b
-#this dude removes duplacates, so gutta fix that
+#takes np list of pixels, r,g,b, and returns a list of the frequency of the
+# r,g,b so that the 6th index (arr[5]) is the frequency, with the pixels sorted, and 
+#all duplacates removed.
 def pixel_list_mode(pixels_with_location,dimen=None):
     array = pixels_with_location.copy()
     array = array.reshape(-1,6)
@@ -110,7 +110,7 @@ def pixel_list_mode(pixels_with_location,dimen=None):
 
     for j in array:
         for k in array:
-            if np.array_equal(j[:2], k[:2]):
+            if np.array_equal(j[:3], k[:3]):
                 j[5] += 1
 
     # cleaned_array = cleaned_array.reshape(array.shape)    
@@ -124,6 +124,29 @@ def pixel_list_mode(pixels_with_location,dimen=None):
         return array[:dimen, :]
     else:
         return array
+
+
+
+#takes pixels_with_location, r,g,b,h,w,0
+#takes np list of pixels, r,g,b, and manipulates their list so that 
+#the 6th value in the rgb list is the frequency of the r,g,b
+def give_pixels_mode(pixels_with_location,dimen=None):
+    array = pixels_with_location.copy()
+    array = array.reshape(-1,6)
+    array[:,5] = 0
+    for j in array:
+        for k in array:
+            if np.array_equal(j[:3], k[:3]): 
+                j[5] += 1
+
+    array = array[np.argsort(array[:, 5])]
+    array = array[::-1]
+
+    if dimen != None:
+        return array[:dimen, :]
+    else:
+        return array
+
 
 
 def give_pixels_location(pixels, remove=False):
