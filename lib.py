@@ -99,23 +99,16 @@ def pixel_list_mode_old(list_arg, dimen=1):
 
 #takes pixels_with_location, r,g,b,h,w,0
 #takes np list of pixels, r,g,b, and returns a list of the frequency of the
-# r,g,b so that the 6th index (arr[5]) is the frequency, with the pixels sorted, and 
-#all duplacates removed.
-def pixel_list_mode(pixels_with_location,dimen=None):
-    array = pixels_with_location.copy()
-    array = array.reshape(-1,6)
-    array[:,5] = 0
-    array = array[np.argsort(array[:,5])]
-    array = array[::-1]
-
-    for j in array:
-        for k in array:
-            if np.array_equal(j[:3], k[:3]):
-                j[5] += 1
+# r,g,b so that the 6th index (arr[5]) is the frequency, with the pixels sorted 
+#all duplacates are removed.
+def pixel_list_mode(pixels_with_location,dimen=None, mode_given=False):
+    if not mode_given:
+        array = give_pixels_mode(pixels_with_location)
 
     # cleaned_array = cleaned_array.reshape(array.shape)    
-    array = np.unique(array, axis=0)
-
+    # array = np.unique(array, axis=0)
+    trash, index = np.unique(array[:, :3], axis=0, return_index=True)
+    array = array[index]
 
     array = array[np.argsort(array[:, 5])]
     array = array[::-1]
@@ -124,7 +117,6 @@ def pixel_list_mode(pixels_with_location,dimen=None):
         return array[:dimen, :]
     else:
         return array
-
 
 
 #takes pixels_with_location, r,g,b,h,w,0
@@ -134,9 +126,11 @@ def give_pixels_mode(pixels_with_location,dimen=None):
     array = pixels_with_location.copy()
     array = array.reshape(-1,6)
     array[:,5] = 0
+    array = array[np.argsort(array[:,5])]
+    array = array[::-1]
     for j in array:
         for k in array:
-            if np.array_equal(j[:3], k[:3]): 
+            if np.array_equal(j[:3], k[:3]):  # changed from j[:2] to j[:3]
                 j[5] += 1
 
     array = array[np.argsort(array[:, 5])]
@@ -146,8 +140,6 @@ def give_pixels_mode(pixels_with_location,dimen=None):
         return array[:dimen, :]
     else:
         return array
-
-
 
 def give_pixels_location(pixels, remove=False):
     if remove == False:
@@ -232,6 +224,40 @@ def sort_by_color(pixels_with_loc):
     print(sorted_array)
     return sorted_array
 
+
+#takes r,g,b,h,w,0 list genorated by give_pixels_location() and pixel_list_mode
+#returns pixels sorted based on their mode index
+def sort_pixels_by_mode(pixels_with_loc, modes_given=False):
+    # sorted_array = pixels_with_loc.copy()
+    # if not modes_given:
+    #     sorted_array = give_pixels_mode(sorted_array)
+    
+    # sorted_array = sorted_array.reshape(-1,6)
+    # sorted_array = sorted_array[np.argsort(sorted_array[:,5])]
+    # sorted_array = sorted_array[::-1]
+    # sorted_array = sorted_array.reshape(pixels_with_loc.shape)
+    array = pixels_with_loc.copy()
+    mode = pixel_list_mode(array.copy())
+    print('mode:',mode)
+    array =  array.reshape(-1,6)
+    sorted_array = array.copy()
+    sorted_array[:,:] = 0
+    count = 0
+
+    total_pixels = sum(mode[:,5])
+    print("total_pixels:", total_pixels)
+    sorted_array = np.zeros((total_pixels,6), dtype=int)
+    sorted_array = sorted_array.reshape(total_pixels,6)
+
+    for j in mode:
+        sorted_array[count:count+j[5],:] = j
+        count += j[5]
+    
+    print('pixels_with_loc.shape: ',pixels_with_loc.shape)
+    print('sorted_array.shape: ',sorted_array.shape)
+    print()
+    sorted_array = sorted_array.reshape(pixels_with_loc.shape)
+    return sorted_array
 
 def ack():
     print(f'yo {__name__} been imported!')
