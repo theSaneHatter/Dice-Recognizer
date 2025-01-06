@@ -1,6 +1,8 @@
 import numpy as np
 import math
 from PIL import Image
+import time
+start = time.time()
 
 #returns mean dif of 2 lists
 def mean_dif(a,b):
@@ -15,21 +17,14 @@ def mean_dif(a,b):
 
 
 
-def pixel_list_mode(pixels_with_location,dimen=None):
-    array = pixels_with_location.copy()
-    array = array.reshape(-1,6)
-    array[:,5] = 0
-    array = array[np.argsort(array[:,5])]
-    array = array[::-1]
-
-    for j in array:
-        for k in array:
-            if np.array_equal(j[:2], k[:2]):
-                j[5] += 1
+def pixel_list_mode(pixels_with_location,dimen=None, mode_given=False):
+    if not mode_given:
+        array = give_pixels_mode(pixels_with_location)
 
     # cleaned_array = cleaned_array.reshape(array.shape)    
-    array = np.unique(array, axis=0)
-
+    # array = np.unique(array, axis=0)
+    trash, index = np.unique(array[:, :3], axis=0, return_index=True)
+    array = array[index]
 
     array = array[np.argsort(array[:, 5])]
     array = array[::-1]
@@ -86,30 +81,62 @@ def give_pixels_location(pixels, remove=False):
         pixels_w_o_location[:,:,:] = pixels[:,:,:3]
         return pixels_w_o_location
 
-array = np.random.randint(0,100,size=(40,1,6))
+array = np.random.randint(0,10,size=(30,1,6))
+array[:,:,:3] *= math.floor(255/10)
+array[:,:,:3] = array[:,:,0][:,:,np.newaxis]
 #array = array.reshape(-1,6)
 
 
 #takes r,g,b,h,w,0 list genorated by give_pixels_location() and pixel_list_mode
 #returns pixels sorted based on their mode index
 def sort_pixels_by_mode(pixels_with_loc, modes_given=False):
-    sorted_array = pixels_with_loc.copy()
-    if not modes_given:
-        sorted_array = give_pixels_mode(sorted_array)
+    # sorted_array = pixels_with_loc.copy()
+    # if not modes_given:
+    #     sorted_array = give_pixels_mode(sorted_array)
     
-    
-    sorted_array = sorted_array.reshape(-1,6)
-    sorted_array = sorted_array[np.argsort(sorted_array[:,5])]
-    sorted_array = sorted_array[::-1]
-    sorted_array = sorted_array.reshape(pixels_with_loc.shape)
+    # sorted_array = sorted_array.reshape(-1,6)
+    # sorted_array = sorted_array[np.argsort(sorted_array[:,5])]
+    # sorted_array = sorted_array[::-1]
+    # sorted_array = sorted_array.reshape(pixels_with_loc.shape)
+    array = pixels_with_loc.copy()
+    mode = pixel_list_mode(array.copy())
+    print('mode:',mode)
+    array =  array.reshape(-1,6)
+    sorted_array = array.copy()
+    sorted_array[:,:] = 0
+    count = 0
 
+    total_pixels = sum(mode[:,5])
+    print("total_pixels:", total_pixels)
+    sorted_array = np.zeros((total_pixels,6), dtype=int)
+    sorted_array = sorted_array.reshape(total_pixels,6)
+
+    for j in mode:
+        sorted_array[count:count+j[5],:] = j
+        count += j[5]
     
+    print('pixels_with_loc.shape: ',pixels_with_loc.shape)
+    print('sorted_array.shape: ',sorted_array.shape)
+    print()
+    sorted_array = sorted_array.reshape(pixels_with_loc.shape)
     return sorted_array
+    
+
     
 sorted_array = sort_pixels_by_mode(array)
 sorted_array = give_pixels_location(sorted_array, remove=True)
-
-
+print(sorted_array)
 
 img = Image.fromarray(sorted_array)
 img.show()
+
+
+
+
+
+
+
+
+
+total_time = time.time() - start
+print(f'\033[32mProcess finished.\nElapsed time: {round(total_time,5)} secends.\033[0m')
