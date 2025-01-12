@@ -107,7 +107,7 @@ def pixel_list_mode(pixels_with_location,dimen=None, mode_given=False):
 
     # cleaned_array = cleaned_array.reshape(array.shape)    
     # array = np.unique(array, axis=0)
-    trash, index = np.unique(array[:, :3], axis=0, return_index=True)
+    _, index = np.unique(array[:, :3], axis=0, return_index=True)
     array = array[index]
 
     array = array[np.argsort(array[:, 5])]
@@ -161,10 +161,10 @@ def give_pixels_location(pixels, remove=False):
     
     if remove:
         shape = pixels.shape[0], pixels.shape[1], 3
-        print('shape var: ', shape)
+        #('shape var: ', shapeprint)
         pixels_w_o_location = np.zeros(math.prod(shape), dtype=np.uint8)
         pixels_w_o_location = pixels_w_o_location.reshape(pixels.shape[0], pixels.shape[1], 3)
-        print('shape: ', pixels_w_o_location.shape)
+        #print('shape: ', pixels_w_o_location.shape)
         pixels_w_o_location[:,:,:] = pixels[:,:,:3]
         return pixels_w_o_location
 
@@ -221,7 +221,7 @@ def sort_by_color(pixels_with_loc):
     sorted_indices = np.argsort(similarities)
     sorted_array = array[sorted_indices]
     sorted_array = sorted_array.reshape(pixels_with_loc.shape)
-    print(sorted_array)
+    #print(sorted_array)
     return sorted_array
 
 
@@ -238,14 +238,14 @@ def sort_pixels_by_mode(pixels_with_loc, modes_given=False):
     # sorted_array = sorted_array.reshape(pixels_with_loc.shape)
     array = pixels_with_loc.copy()
     mode = pixel_list_mode(array.copy())
-    print('mode:',mode)
+    #print('mode:',mode)
     array =  array.reshape(-1,6)
     sorted_array = array.copy()
     sorted_array[:,:] = 0
     count = 0
 
     total_pixels = sum(mode[:,5])
-    print("total_pixels:", total_pixels)
+    #print("total_pixels:", total_pixels)
     sorted_array = np.zeros((total_pixels,6), dtype=int)
     sorted_array = sorted_array.reshape(total_pixels,6)
 
@@ -253,11 +253,40 @@ def sort_pixels_by_mode(pixels_with_loc, modes_given=False):
         sorted_array[count:count+j[5],:] = j
         count += j[5]
     
-    print('pixels_with_loc.shape: ',pixels_with_loc.shape)
-    print('sorted_array.shape: ',sorted_array.shape)
-    print()
+    #print('pixels_with_loc.shape: ',pixels_with_loc.shape)
+    #print('sorted_array.shape: ',sorted_array.shape)
+    #print()
     sorted_array = sorted_array.reshape(pixels_with_loc.shape)
     return sorted_array
+
+# trims blank lines from array
+def trim_blank(arr, r2=0.05):
+    bitmask = np.add.reduce(arr,1) < arr.shape[1] - arr.shape[1]*r2
+    bitmask_f = np.logical_or.accumulate(bitmask)
+    bitmask_b = np.logical_or.accumulate(bitmask[::-1])
+    bitmask_b = bitmask_b[::-1]
+    usefull_bitmask = np.logical_and(bitmask_f, bitmask_b)
+    return arr[usefull_bitmask]
+
+#trims t,b,l,r
+def trim_all_blanks(arr,r2=0.05):
+    bitmask = trim_blank(arr, r2)
+    bitmask = np.transpose(trim_blank(np.transpose(bitmask), r2))
+    return bitmask
+#turns image into bitmap of edges, shape (a,b)
+def edge_detect(img,buckets=2):
+    img = img.convert('HSV')
+    pixels = np.array(img)
+    pixels = pixels[:,:,0]
+    pixels = np.floor(np.divide(pixels,360//buckets))
+    pixels_l, pixels_up = np.roll(pixels,1,1), np.roll(pixels,1,0)
+    bitmap_l, bitmap_up = np.equal(pixels_l, pixels), np.equal(pixels_up, pixels)
+    bitmap = np.logical_and(bitmap_l, bitmap_up)
+    # bitmap = trim_blank(bitmap)
+    # bitmap = np.transpose(trim_blank(np.transpose(bitmap)))
+    # bitmap = np.multiply(bitmap, 255)
+    return bitmap
+
 
 def ack():
     print(f'yo {__name__} been imported!')

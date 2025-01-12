@@ -1,4 +1,5 @@
 from PIL import Image, ImageDraw, ImageEnhance
+import PIL.Image
 from lib import *
 import numpy as np
 import math
@@ -7,49 +8,54 @@ start = time.time()
 #purple is ~90,0,70
 #green ~90,115,0
 
-Dice1 = Image.open('./assets/Dice1.jpg') 
+Dice = Image.open('./assets/Dice1.jpg') 
+
+
+
+#sharpness 
+sharpness = ImageEnhance.Sharpness(Dice)
+Dice = sharpness.enhance(-10)
+
+#contrast 
+contrast = ImageEnhance.Contrast(Dice)
+Dice = contrast.enhance(1)
+
+Dice.show()
+#brightness
+brightness = ImageEnhance.Brightness(Dice)
+Dice = brightness.enhance(0.03)
 
 
 # resize 
-print(Dice1.size)
-h,w = Dice1.size
-h,w = round(h/1),round(w/1)
+print(Dice.size)
+h,w = Dice.size
+h,w = round(h/5),round(w/5)
 print('new size' , h,w)
 size = (h,w)
-Dice1 = Dice1.resize(size)
-
-# contrast 
-contrast = ImageEnhance.Contrast(Dice1)
-Dice1 = contrast.enhance(1)
-
-#brightness
-brightness = ImageEnhance.Brightness(Dice1)
-Dice1 = brightness.enhance(1)
-
-#sharpness 
-sharpness = ImageEnhance.Sharpness(Dice1)
-Dice1 = sharpness.enhance(3)
-
-
-
-Dice1.show()
-
-# Convert the image to a numpy array
-pixels = np.array(Dice1)
-print(pixels.shape)
-# Print the pixel values
-# print(pixel_values)
+Dice = Dice.resize(size)
 
 
 
 
-pixels_with_location = give_pixels_location(pixels)
+# We have edge detection!
+
+# If the die non-pip and the background, edge detection can find only the pips if we use just two buckets.
+# This is great!
+# But if there are more than one die, and they are close, how do we differentate the dice?
+# We can do edge detection with like 30 buckets to get edges where the dice are
+# and then find what columns and rows we need to split on.
+# Then use those to split the two bucket bitmap.
 
 
-sorted_by_color = give_pixels_location(sort_by_color(pixels_with_location), remove=True)
 
-Dice1 = Image.fromarray(sorted_by_color)
-Dice1.show()
+
+pixels2 = edge_detect(Dice)
+pixels2 = np.multiply(pixels2, 255)
+Dice = Image.fromarray(pixels2)
+
+
+
+Dice.show()
 
 total_time = time.time() - start
 print(f'\033[32mProcess finished.\nElapsed time: {round(total_time,5)} secends.\033[0m')
