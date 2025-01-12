@@ -8,7 +8,7 @@ start = time.time()
 #purple is ~90,0,70
 #green ~90,115,0
 
-Dice = Image.open('./assets/Dice2.jpg') 
+Dice = Image.open('./assets/Dice1.jpg') 
 
 
 
