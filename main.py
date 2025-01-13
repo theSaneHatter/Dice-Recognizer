@@ -8,7 +8,7 @@ start = time.time()
 #purple is ~90,0,70
 #green ~90,115,0
 
-Dice = Image.open('./assets/Dice1.jpg') 
+Dice = Image.open('./assets/Dice2.jpg') 
 
 
 
@@ -24,7 +24,6 @@ Dice.show()
 #brightness
 brightness = ImageEnhance.Brightness(Dice)
 Dice = brightness.enhance(1)
-
 
 # resize 
 print(Dice.size)
@@ -51,7 +50,10 @@ Dice = Dice.resize(size)
 
 
 pixels2 = edge_detect(Dice)
+pixels2 = trim_all_blanks(pixels2)
+print(pixels2)
 pixels2 = np.multiply(pixels2, 255)
+
 Dice = Image.fromarray(pixels2)
 
 # Dice = Dice.resize((h//10,w//10))

@@ -260,7 +260,7 @@ def sort_pixels_by_mode(pixels_with_loc, modes_given=False):
     return sorted_array
 
 # trims blank lines from array
-def trim_blank(arr, r2=0.05):
+def trim_blank(arr, r2=0.01):
     bitmask = np.add.reduce(arr,1) < arr.shape[1] - arr.shape[1]*r2
     bitmask_f = np.logical_or.accumulate(bitmask)
     bitmask_b = np.logical_or.accumulate(bitmask[::-1])
@@ -269,7 +269,7 @@ def trim_blank(arr, r2=0.05):
     return arr[usefull_bitmask]
 
 #trims t,b,l,r
-def trim_all_blanks(arr,r2=0.05):
+def trim_all_blanks(arr,r2=0.01):
     bitmask = trim_blank(arr, r2)
     bitmask = np.transpose(trim_blank(np.transpose(bitmask), r2))
     return bitmask
