@@ -266,6 +266,8 @@ def trim_blank(arr, r2=0.01):
     bitmask_b = np.logical_or.accumulate(bitmask[::-1])
     bitmask_b = bitmask_b[::-1]
     usefull_bitmask = np.logical_and(bitmask_f, bitmask_b)
+    if sum(usefull_bitmask) <= 1:
+         print(f'\033[31mWorning from trim_blank(): The size of the processed image (size=[{usefull_bitmask.shape}]) is [too] small\033[0m')
     return arr[usefull_bitmask]
 
 #trims t,b,l,r
@@ -286,6 +288,10 @@ def edge_detect(img,buckets=2):
     # bitmap = np.transpose(trim_blank(np.transpose(bitmap)))
     # bitmap = np.multiply(bitmap, 255)
     return bitmap
+
+
+
+
 
 
 def ack():

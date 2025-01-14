@@ -4,11 +4,13 @@ from lib import *
 import numpy as np
 import math
 from scipy import stats
+import cv2
 start = time.time()
 #purple is ~90,0,70
 #green ~90,115,0
 
-Dice = Image.open('./assets/Dice2.jpg') 
+Dice = Image.open('./assets/Dice_optimal.jpg') 
+
 
 
 
@@ -19,8 +21,8 @@ Dice = sharpness.enhance(1)
 #contrast 
 contrast = ImageEnhance.Contrast(Dice)
 Dice = contrast.enhance(1)
+# Dice.show()
 
-Dice.show()
 #brightness
 brightness = ImageEnhance.Brightness(Dice)
 Dice = brightness.enhance(1)
@@ -28,7 +30,7 @@ Dice = brightness.enhance(1)
 # resize 
 print(Dice.size)
 h,w = Dice.size
-d = 2
+d = 1
 h,w = round(h/d),round(w/d)
 print('new size' , h,w)
 size = (h,w)
@@ -49,16 +51,15 @@ Dice = Dice.resize(size)
 
 
 
-pixels2 = edge_detect(Dice)
-pixels2 = trim_all_blanks(pixels2)
-print(pixels2)
-pixels2 = np.multiply(pixels2, 255)
+pixels = edge_detect(Dice,buckets=2)
+pixels = trim_all_blanks(pixels)
+pixels = np.multiply(pixels, 255)
+Dice = Image.fromarray(pixels)
+#grayscale 
+# Dice = Dice.resize()
+# Dice.show()
 
-Dice = Image.fromarray(pixels2)
 
-# Dice = Dice.resize((h//10,w//10))
-
-Dice.show()
 
 total_time = time.time() - start
 print(f'\033[32mProcess finished.\nElapsed time: {round(total_time,5)} secends.\033[0m')

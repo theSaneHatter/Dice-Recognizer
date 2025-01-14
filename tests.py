@@ -1,43 +1,70 @@
+from PIL import Image, ImageDraw, ImageEnhance
+import PIL.Image
+from lib import *
 import numpy as np
 import math
-from PIL import Image
-import time
+from scipy import stats
+import cv2
 start = time.time()
+#purple is ~90,0,70
+#green ~90,115,0
 
-a = np.zeros((10,5), dtype=int)
-a[:,:] = 1
-
-
-c = np.random.randint(0,2,(2,3))
-arr = [
-    [0,0,0,0,0],
-    [0,0,0,0,0],
-    [0,1,1,0,0],
-    [0,0,0,0,0],
-    [0,0,1,1,0],
-    [0,0,0,0,0],
-    [0,0,0,0,0],
-]
-c = np.array(arr)
-print("before\n",c)
-
-bitmask = np.add.reduce(c,1) > 0
-print(np.add.reduce(c,1) > 0)
-bitmask_f = np.logical_or.accumulate(bitmask)
-print(bitmask_f)
-
-bitmask_b = np.logical_or.accumulate(bitmask[::-1])
-bitmask_b = bitmask_b[::-1]
-print('b',bitmask_b)
-cumulative = np.logical_and(bitmask_f, bitmask_b)
-print(cumulative)
-
-print(c[cumulative])
+Dice = Image.open('./assets/Dice_optimal.jpg') 
 
 
 
+
+#sharpness 
+sharpness = ImageEnhance.Sharpness(Dice)
+Dice = sharpness.enhance(1)
+
+#contrast 
+contrast = ImageEnhance.Contrast(Dice)
+Dice = contrast.enhance(1)
+# Dice.show()
+
+#brightness
+brightness = ImageEnhance.Brightness(Dice)
+Dice = brightness.enhance(1)
+
+# resize 
+print(Dice.size)
+h,w = Dice.size
+d = 1
+h,w = round(h/d),round(w/d)
+print('new size' , h,w)
+size = (h,w)
+Dice = Dice.resize(size)
+
+
+
+
+# We have edge detection!
+
+# If the die non-pip and the background, edge detection can find only the pips if we use just two buckets.
+# This is great!
+# But if there are more than one die, and they are close, how do we differentate the dice?
+# We can do edge detection with like 30 buckets to get edges where the dice are
+# and then find what columns and rows we need to split on.
+# Then use those to split the two bucket bitmap.
+
+
+
+
+pixels = edge_detect(Dice,buckets=2)
+pixels = trim_all_blanks(pixels)
+# pixels = np.multiply(pixels, 255)
+Dice = Image.fromarray(pixels)
+
+Dice.show()
+
+
+pixels_up = np.roll(pixels, )
 
 
 
 total_time = time.time() - start
 print(f'\033[32mProcess finished.\nElapsed time: {round(total_time,5)} secends.\033[0m')
+
+
+
