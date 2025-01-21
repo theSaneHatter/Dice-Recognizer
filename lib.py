@@ -290,8 +290,49 @@ def edge_detect(img,buckets=2):
     return bitmap
 
 
+def get_neighbors(bitmap):
+    if np.sum(bitmap) <= 0:
+        print('\033[32mWorning from GOL_clock(): Entered array are all zeros\033[0m')
+        return None
+    rows, colms = bitmap.shape
+    bitmap_save = np.zeros((rows+2,colms+2),dtype=int)
+    bitmap_save[1:rows+1,1:colms+1] = bitmap[:,:]
+    
 
+    shift_up = np.roll(bitmap_save,1,0)
+    shift_down = np.roll(bitmap_save,-1,0)
+    shift_right = np.roll(bitmap_save,1,1)
+    shift_left = np.roll(bitmap_save,-1,1)
 
+    shift_RU = np.roll(shift_right,1,0)
+    shift_RD = np.roll(shift_right,-1,0)
+    shift_LU = np.roll(shift_left,1,0)
+    shift_LD = np.roll(shift_left,-1,0)
+    
+    neighbers = shift_up+shift_down+shift_right+shift_left+shift_RU+shift_RD+shift_LU+shift_LD
+    
+    neighbers = neighbers[1:rows, 1:colms]
+    
+    return neighbers
+
+#takes bitmap shape: (n,n)
+#returns list with each true value uneque number shape: (n,n)
+#takes list 
+#returns list with each true value uneque number
+#currently isnt the most optimized 
+def trues_uneque_int(arr_arg):
+    if arr_arg.dtype != int and arr_arg.dtype != float:
+        print(f'''\033[31mPossable Error in trues_uneque_int():\n  
+    array given not of type float or int, type:>{arr_arg.dtype}<\033[0m''')
+    arr = arr_arg.copy()
+    save = arr.copy()
+    guys_to_multiply_by = np.arange(np.prod(arr_arg.shape)).reshape(arr_arg.shape)
+    arr = np.multiply(arr,guys_to_multiply_by)
+    max_ = np.max(arr)
+    range_ = max_ - np.min(np.where((arr==0),max_,arr)) 
+    arr = np.subtract(arr,range_-2)
+    arr = np.where((arr < 0),0,arr)
+    return arr
 
 
 def ack():

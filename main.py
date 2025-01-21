@@ -57,7 +57,7 @@ pixels = np.multiply(pixels, 255)
 Dice = Image.fromarray(pixels)
 #grayscale 
 # Dice = Dice.resize()
-# Dice.show()
+Dice.show()
 
 
 

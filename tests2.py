@@ -29,23 +29,26 @@ bitmask_b = bitmask_b[::-1]
 cumulative = np.logical_and(bitmask_f, bitmask_b)
 
 
+#takes list 
+#returns list with each true value uneque number
+#currently isnt the most optimized 
+def trues_uneque_int(arr_arg):
+    if arr_arg.dtype != int and arr_arg.dtype != float:
+        print(f'''\033[31mPossable Error in trues_uneque_int():\n  
+    array given not of type float or int, type:>{arr_arg.dtype}<\033[0m''')
+    arr = arr_arg.copy()
+    save = arr.copy()
+    guys_to_multiply_by = np.arange(np.prod(arr_arg.shape)).reshape(arr_arg.shape)
+    arr = np.multiply(arr,guys_to_multiply_by)
+    max_ = np.max(arr)
+    range_ = max_ - np.min(np.where((arr==0),max_,arr)) 
+    arr = np.subtract(arr,range_-2)
+    arr = np.where((arr < 0),0,arr)
+    return arr
 
-c = np.array(arr,dtype=int)
-print("before\n",c)
 
-shift_down  = np.roll(arr,1,0)
-print('shift_down\n',shift_down)
-
-shift_up = np.roll(arr,-1,0)
-print('shift_up\n',shift_up)
-
-shift_left = np.roll(arr,1,-1)
-print('shift_left\n',shift_left)
-
-shift_right = np.roll(arr,1,1)
-print('shift_right\n',shift_right)
-
-
+print('c:',c)
+print('trues_uneque_int',trues_uneque_int(c))
 
 total_time = time.time() - start
 print(f'\033[32mProcess finished.\nElapsed time: {round(total_time,5)} secends.\033[0m')
