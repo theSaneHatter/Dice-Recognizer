@@ -58,6 +58,20 @@ def trues_uneque_int(arr_arg=np.random.randint(0,2,(10,10))):
                 n+=1
     return arr
 
+
+def roll_8(arr):
+    arr = arr.copy()
+    roll_u = np.roll(arr, -1,0)
+    roll_d = np.roll(arr, 1,0)
+    roll_up = np.roll(arr, -1,0)
+    roll_up = np.roll(arr, -1,0)
+
+    roll_up = np.roll(arr, -1,0)
+    roll_up = np.roll(arr, -1,0)
+    roll_up = np.roll(arr, -1,0)
+    roll_up = np.roll(arr, -1,0)
+
+
 print('c:',c)
 # print('trues_uneque_int',trues_uneque_int(c))
 
