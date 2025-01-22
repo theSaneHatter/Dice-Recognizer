@@ -2,7 +2,6 @@ import numpy as np
 import math
 from PIL import Image
 import time
-from lib import *
 import timeit
 start = time.time()
 
@@ -13,11 +12,9 @@ a[:,:] = 1
 c = np.random.randint(0,2,(2,3))
 arr = [
     [0,0,0,0,0],
-    [0,0,0,0,0],
     [0,1,1,0,0],
     [0,0,0,0,0],
     [0,0,1,1,0],
-    [0,0,0,0,0],
     [0,0,0,0,0],
 ]
 c = np.array(arr)
@@ -34,10 +31,42 @@ cumulative = np.logical_and(bitmask_f, bitmask_b)
 #takes list 
 #returns list with each true value uneque number
 #currently isnt the most optimized 
-def trues_uneque_int_faster_but_worse(arr_arg=np.random.randint(0,2,(10,10))):
+def trues_unique_int(arr_arg):
     if arr_arg.dtype != int and arr_arg.dtype != float:
-        print(f'''\033[31mPossable Error in trues_uneque_int():\n  
+        print(f'''\033[31mPossable Error in trues_unique_int():\n  
     array given not of type float or int, type:>{arr_arg.dtype}<\033[0m''')
+    arr = arr_arg.copy()
+    save = arr.copy()
+    guys_to_multiply_by = np.arange(np.prod(arr_arg.shape)).reshape(arr_arg.shape)
+    arr = np.multiply(arr,guys_to_multiply_by)
+    max_ = np.max(arr)
+    range_ = max_ - np.min(np.where((arr==0),max_,arr)) 
+    arr = np.subtract(arr,range_-2)
+    arr = np.where((arr < 0),0,arr)
+    return arr
+
+import numpy as np
+import math
+from PIL import Image
+import time
+from lib import *
+import timeit
+start = time.time()
+
+
+bitmask = np.add.reduce(c,1) > 0
+bitmask_f = np.logical_or.accumulate(bitmask)
+
+bitmask_b = np.logical_or.accumulate(bitmask[::-1])
+bitmask_b = bitmask_b[::-1]
+cumulative = np.logical_and(bitmask_f, bitmask_b)
+
+
+#takes list 
+#returns list with each true value uneque number
+#currently isnt the most optimized 
+def trues_unique_int_faster_but_worse(arr_arg=np.random.randint(0,2,(100,100), dtype=int)):
+    
     arr = arr_arg.copy()
     guys_to_multiply_by = np.arange(np.prod(arr_arg.shape)).reshape(arr_arg.shape)
     arr = np.multiply(arr,guys_to_multiply_by)
@@ -48,7 +77,7 @@ def trues_uneque_int_faster_but_worse(arr_arg=np.random.randint(0,2,(10,10))):
     return arr
 
 
-def trues_uneque_int(arr_arg=np.random.randint(0,2,(10,10))):
+def trues_unique_int(arr_arg=np.random.randint(0,2,(100,100), dtype=int)):
     arr = arr_arg.copy()
     n = 1
     for colomn in range(arr.shape[0]):
@@ -59,21 +88,48 @@ def trues_uneque_int(arr_arg=np.random.randint(0,2,(10,10))):
     return arr
 
 
-def roll_8(arr):
-    arr = arr.copy()
-    roll_u = np.roll(arr, -1,0)
-    roll_d = np.roll(arr, 1,0)
-    roll_up = np.roll(arr, -1,0)
-    roll_up = np.roll(arr, -1,0)
+def tests(arr_arg=np.random.randint(0,2,(100,100), dtype=int)):
+    arr = arr_arg.copy()
+    arr[arr==1] = np.arange(1,np.sum(arr[arr==1].shape) +1 )
+    return arr
 
-    roll_up = np.roll(arr, -1,0)
-    roll_up = np.roll(arr, -1,0)
-    roll_up = np.roll(arr, -1,0)
-    roll_up = np.roll(arr, -1,0)
+# def roll_8(arr_arg):
+#     arr = arr_arg.copy()
+#     roll_d = np.roll(arr_arg, 1,0)
+#     roll_u = np.roll(arr_arg, -1,0)
+#     roll_l = np.roll(arr_arg, -1,1)
+#     roll_r = np.roll(arr_arg, 1,1)
+#     roll_u = np.roll(arr_arg, 
+#     out = np.array(roll_d,)
 
 
-print('c:',c)
-# print('trues_uneque_int',trues_uneque_int(c))
+a = np.zeros((10,5), dtype=int)
+a[:,:] = 1
+
+
+c = np.random.randint(0,2,(2,3))
+arr = [
+    [0,0,0,0,0],
+    [0,0,0,0,0],
+    [0,1,1,0,0],
+    [0,0,0,0,0],
+    [0,0,1,1,0],
+    [0,0,0,0,0],
+    [0,0,0,0,0],
+]
+c = np.array(arr)
+print("before\n",c,'\nPost:\n')
+print(tests(c))
+
+trials = 10000
+tests_time = timeit.timeit(tests, number=trials)
+print('tests_time',tests_time)
+worse_time = timeit.timeit(trues_unique_int_faster_but_worse, number=trials)
+print('worse_time',worse_time)
+ittorative_time = timeit.timeit(trues_unique_int, number=trials)
+print('ittorative_time',ittorative_time)
+print('trials',trials)
+
 
 total_time = time.time() - start
 print(f'\033[32mProcess finished.\nElapsed time: {round(total_time,5)} secends.\033[0m')
