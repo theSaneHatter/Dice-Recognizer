@@ -319,25 +319,16 @@ def get_neighbors(bitmap):
 #returns list with each true value uneque number shape: (n,n)
     #with each true value uneque number
 #currently isnt the most optimized--doesnt make each element smallest number possable
-def trues_uneque_int_faster_but_worse(arr_arg=np.random.randint(0,2,(10,10))):
-    if arr_arg.dtype != int and arr_arg.dtype != float:
-        print(f'''\033[31mPossable Error in trues_uneque_int():\n  
-    array given not of type float or int, type:>{arr_arg.dtype}<\033[0m''')
+def trues_unique_int(arr_arg):
     arr = arr_arg.copy()
-    guys_to_multiply_by = np.arange(np.prod(arr_arg.shape)).reshape(arr_arg.shape)
-    arr = np.multiply(arr,guys_to_multiply_by)
-    max_ = np.max(arr)
-    range_ = max_ - np.min(arr[arr>np.min(arr)]) 
-    arr = np.subtract(arr,range_-2)
-    arr = np.where((arr < 0),0,arr)
+    arr[arr==1] = np.arange(1,np.sum(arr[arr==1].shape) +1 )
     return arr
-
 
 #takes bitmap shape: (n,n)
 #returns list with each true value uneque number shape: (n,n)
     #with each true value uneque number
 #currently not the fastest, but orders the numbers so they are the smallest possable
-def trues_uneque_int(arr_arg=np.random.randint(0,2,(10,10))):
+def trues_uneque_int_lineor(arr_arg):
     arr = arr_arg.copy()
     n = 1
     for colomn in range(arr.shape[0]):
