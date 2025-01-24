@@ -9,26 +9,7 @@ start = time.time()
 
 
 
-
-
-a = np.zeros((10,5), dtype=int)
-a[:,:] = 1
-
-
-c = np.random.randint(0,2,(2,3))
-arr = [
-    [0,0,0,0,0],
-    [0,0,0,0,0],
-    [0,1,1,0,0],
-    [0,0,0,0,0],
-    [0,0,1,1,0],
-    [0,0,0,0,0],
-    [0,0,0,0,0],
-]
-c = np.array(arr)
-print("before\n",c,'\nPost:\n')
-
-def roll_8(arr_arg):
+def shift_9(arr_arg):
     arr = arr_arg.copy()
     shift_d = np.roll(arr_arg, 1,0)
     shift_u = np.roll(arr_arg, -1,0)
@@ -38,10 +19,52 @@ def roll_8(arr_arg):
     shift_lu = np.roll(shift_l, -1,1)
     shift_ru = np.roll(shift_r,1,1)  
     shift_ld = np.roll(shift_l,-1,0) 
-    shift_ld = np.roll(shift_r,1,0) 
+    shift_rd = np.roll(shift_r,1,0) 
     
+    out = np.array([arr,
+                    shift_d,
+                    shift_u,
+                    shift_l,
+                    shift_r,
+                    shift_lu,
+                    shift_ru,
+                    shift_ld,
+                    shift_rd
+                    ])
+    return out    
 
-roll_8(c)
+
+def list_max(arr_arg):
+    arr = arr_arg.copy()
+    go = True
+    while go:
+        save = arr
+        arr = np.multiply(np.maximum.reduce(shift_9(trues_unique_int(arr))), arr_arg)     
+        print('np.array_equal(save, arr)',np.array_equal(save, arr))
+        if np.array_equal(save, arr):
+            go = False
+    return arr
+            
+            
+
+
+
+a = np.zeros((10,5), dtype=int)
+a[:,:] = 1
+c = np.random.randint(0,2,(8,8))
+arr = [
+    [0,0,0,0,0,1,1,0],
+    [0,0,0,0,0,1,1,0],
+    [0,1,1,0,0,1,1,0],
+    [0,0,0,0,0,1,0,0],
+    [0,0,1,1,0,0,1,0],
+    [0,0,0,0,0,1,1,0],
+    [0,0,0,0,0,1,1,0],
+]
+
+a = np.array(arr)
+print("before\n",c,'\nPost:\n')
+print(list_max(a))
 
 
 
