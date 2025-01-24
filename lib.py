@@ -338,6 +338,47 @@ def trues_uneque_int_lineor(arr_arg):
                 n+=1
     return arr
 
+#takes bitmap, returns list of that bitmap shifted in all 9ds (9th being same thingy)
+#currently connects bottom top like sht so need b optomized 
+def shift_9(arr_arg):
+    arr = arr_arg.copy()
+    shift_d = np.roll(arr_arg, 1,0)
+    shift_u = np.roll(arr_arg, -1,0)
+    shift_l = np.roll(arr_arg, -1,1)
+    shift_r = np.roll(arr_arg, 1,1)
+
+    shift_lu = np.roll(shift_l, -1,1)
+    shift_ru = np.roll(shift_r,1,1)  
+    shift_ld = np.roll(shift_l,-1,0) 
+    shift_rd = np.roll(shift_r,1,0) 
+    
+    out = np.array([arr,
+                    shift_d,
+                    shift_u,
+                    shift_l,
+                    shift_r,
+                    shift_lu,
+                    shift_ru,
+                    shift_ld,
+                    shift_rd
+                    ])
+    return out    
+
+
+#takes bitmap and gives all lines uneque int
+#currently could do with some optomization: it reappilies some fns sometimes
+def list_max(arr_arg):
+    arr = arr_arg.copy()
+    go = True
+    while go:
+        save = arr
+        arr = np.multiply(np.maximum.reduce(shift_9(trues_unique_int(arr))), arr_arg)     
+        print('np.array_equal(save, arr)',np.array_equal(save, arr))
+        if np.array_equal(save, arr):
+            go = False
+    return arr
+            
+
 
 def ack():
     print(f'yo {__name__} been imported!')
