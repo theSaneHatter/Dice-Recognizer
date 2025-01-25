@@ -318,7 +318,6 @@ def get_neighbors(bitmap):
 #takes bitmap shape: (n,n)
 #returns list with each true value uneque number shape: (n,n)
     #with each true value uneque number
-#currently isnt the most optimized--doesnt make each element smallest number possable
 def trues_unique_int(arr_arg):
     arr = arr_arg.copy()
     arr[arr==1] = np.arange(1,np.sum(arr[arr==1].shape) +1 )
@@ -339,18 +338,20 @@ def trues_uneque_int_lineor(arr_arg):
     return arr
 
 #takes bitmap, returns list of that bitmap shifted in all 9ds (9th being same thingy)
-#currently connects bottom top like sht so need b optomized 
+#connects bottom to top because it uses roll 
 def shift_9(arr_arg):
+    
     arr = arr_arg.copy()
-    shift_d = np.roll(arr_arg, 1,0)
-    shift_u = np.roll(arr_arg, -1,0)
-    shift_l = np.roll(arr_arg, -1,1)
-    shift_r = np.roll(arr_arg, 1,1)
 
-    shift_lu = np.roll(shift_l, -1,1)
-    shift_ru = np.roll(shift_r,1,1)  
+    shift_d = np.roll(arr, 1,0)
+    shift_u = np.roll(arr, -1,0)
+    shift_l = np.roll(arr, -1,1)
+    shift_r = np.roll(arr, 1,1)
+
+    shift_lu = np.roll(shift_l, 1,0)
+    shift_ru = np.roll(shift_r,1,0)  
     shift_ld = np.roll(shift_l,-1,0) 
-    shift_rd = np.roll(shift_r,1,0) 
+    shift_rd = np.roll(shift_r,-1,0) 
     
     out = np.array([arr,
                     shift_d,
@@ -362,23 +363,43 @@ def shift_9(arr_arg):
                     shift_ld,
                     shift_rd
                     ])
-    return out    
+    return out        
 
 
 #takes bitmap and gives all lines uneque int
 #currently could do with some optomization: it reappilies some fns sometimes
 def list_max(arr_arg):
     arr = arr_arg.copy()
+    
+    top_sum = np.sum(arr[(0,-1),:])
+    bottom_sum = np.sum(arr[:,(0,-1)])
+    if top_sum + bottom_sum != 0:
+        arr = np.pad(arr,1)
+
+    arg = arr.copy()
+
     go = True
     while go:
         save = arr
-        arr = np.multiply(np.maximum.reduce(shift_9(trues_unique_int(arr))), arr_arg)     
-        print('np.array_equal(save, arr)',np.array_equal(save, arr))
+        arr = np.multiply(np.maximum.reduce(shift_9(trues_unique_int(arr))), arg)     
+        
         if np.array_equal(save, arr):
             go = False
+
+    if top_sum + bottom_sum != 0:
+        arr = arr[1:-1,1:-1]
+
     return arr
             
 
+#gives avg location of 1s in bitmask
+#takes bitmask, returns avg (x,y) posistion
+def avg_location(arr_arg):
+    locs = np.nonzero(arr_arg)
+    avg_x = np.average(locs[0])
+    avg_y = np.average(locs[1])
+    avg = avg_x,avg_y
+    return avg
 
 def ack():
     print(f'yo {__name__} been imported!')
