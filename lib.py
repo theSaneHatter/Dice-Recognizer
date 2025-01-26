@@ -317,7 +317,7 @@ def get_neighbors(bitmap):
 
 #takes bitmap shape: (n,n)
 #returns list with each true value uneque number shape: (n,n)
-    #with each true value uneque number
+    #each true value uneque number
 def trues_unique_int(arr_arg):
     arr = arr_arg.copy()
     arr[arr==1] = np.arange(1,np.sum(arr[arr==1].shape) +1 )
@@ -400,6 +400,25 @@ def avg_location(arr_arg):
     avg_y = np.average(locs[1])
     avg = avg_x,avg_y
     return avg
+
+
+#takes bitmask, returns avg (x,y) posistion
+#gives avg location of 1s in bitmask
+def center(arr_arg):
+    locs = np.nonzero(arr_arg)
+    avg_x = np.average(locs[0])
+    avg_y = np.average(locs[1])
+    avg = avg_x,avg_y
+    return avg
+
+
+#takes bitmask, returns the std of the distance of each True point to the avg point
+def distance_std(bitmask):
+    Cx, Cy = center(bitmask)
+    Xs, Ys = np.nonzero(bitmask)
+    Ds = np.sqrt( np.add(np.subtract(Xs,Cx)**2, np.subtract(Ys,Cy)**2))
+    std = np.std(Ds)
+    return std
 
 def ack():
     print(f'yo {__name__} been imported!')
