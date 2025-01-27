@@ -365,11 +365,10 @@ def shift_9(arr_arg):
                     ])
     return out        
 
-
 #takes bitmap and gives all lines uneque int
 #currently could do with some optomization: it reappilies some fns sometimes
 def list_max(arr_arg):
-    arr = arr_arg.copy()
+    arr = arr_arg.copy().astype(int)
     
     top_sum = np.sum(arr[(0,-1),:])
     bottom_sum = np.sum(arr[:,(0,-1)])
@@ -386,6 +385,34 @@ def list_max(arr_arg):
         if np.array_equal(save, arr):
             go = False
 
+    if top_sum + bottom_sum != 0:
+        arr = arr[1:-1,1:-1]
+
+    return arr
+
+#takes bitmap and gives all lines uneque int
+#currently could do with some optomization: it reappilies some fns sometimes
+def lines_unique_int(arr_arg):
+    arr = arr_arg.copy().astype(int)
+    
+    top_sum = np.sum(arr[(0,-1),:])
+    bottom_sum = np.sum(arr[:,(0,-1)])
+
+    if top_sum + bottom_sum != 0:
+        arr = np.pad(arr,1)
+
+    # arr = trues_unique_int(arr)
+
+    arg = arr.copy()
+    itter = 0
+    go = True
+    while go:
+        itter += 1
+        save = arr
+        arr = np.multiply(np.maximum.reduce(shift_9(trues_unique_int(arr))), arg)     
+        if np.array_equal(save.astype(int), arr.astype(int)):
+            go = False
+        # print('itter in lines_uneque_int',itter)
     if top_sum + bottom_sum != 0:
         arr = arr[1:-1,1:-1]
 
@@ -419,6 +446,32 @@ def distance_std(bitmask):
     Ds = np.sqrt( np.add(np.subtract(Xs,Cx)**2, np.subtract(Ys,Cy)**2))
     std = np.std(Ds)
     return std
+
+#removes small lines from bitmask
+#takes bitmask shape (n,n) returns bitmask with all inner lines bigger then arg=min_pixels
+def remove_small_lines(arr_arg,min_pixels,lines_id=0,lines_unique=False):
+    if lines_id == 0:
+        arr = ~arr_arg.copy().astype(int)
+    else:
+        arr = arr_arg.copy().astype(int)
+
+    if lines_unique == False:
+        arr = lines_unique_int(arr).astype(int)
+    
+
+    max_ = np.max(arr)
+    print('max_',max_)
+    for i in range(1,max_+1):
+        if np.size(arr[arr==i]) < min_pixels:
+            arr[arr==i] = 0
+            print('number:',i)
+            print('occurances:',np.size(arr[arr==i]))
+    arr[arr>0] = 1
+
+    if lines_id == 0:
+        arr = ~arr
+    return arr
+
 
 def ack():
     print(f'yo {__name__} been imported!')

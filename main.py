@@ -13,7 +13,6 @@ Dice = Image.open('./assets/Dice_optimal.jpg')
 
 
 
-
 #sharpness 
 sharpness = ImageEnhance.Sharpness(Dice)
 Dice = sharpness.enhance(1)
@@ -30,9 +29,10 @@ Dice = brightness.enhance(1)
 # resize 
 print(Dice.size)
 h,w = Dice.size
-d = 1
+d = 10
 h,w = round(h/d),round(w/d)
-print('new size' , h,w)
+print('new size', h,w)
+time.sleep(2)
 size = (h,w)
 Dice = Dice.resize(size)
 
@@ -50,9 +50,19 @@ Dice = Dice.resize(size)
 
 
 
-
 pixels = edge_detect(Dice,buckets=2)
+
+# pixels = np.random.randint(0,2,(30,33))
+
 pixels = trim_all_blanks(pixels)
+print('unique values:',np.unique(pixels))
+
+# pixels = remove_small_lines(pixels,10)
+print('unique values after lines_uneque_int():',np.unique(pixels))
+
+print(trues_unique_int(pixels))
+
+
 pixels = np.multiply(pixels, 255)
 Dice = Image.fromarray(pixels)
 #grayscale 
