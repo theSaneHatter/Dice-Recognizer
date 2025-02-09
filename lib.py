@@ -404,12 +404,13 @@ def lines_unique_int(arr_arg):
     # arr = trues_unique_int(arr)
 
     arg = arr.copy()
+    arr = trues_unique_int(arr)
     itter = 0
     go = True
     while go:
         itter += 1
         save = arr
-        arr = np.multiply(np.maximum.reduce(shift_9(trues_unique_int(arr))), arg)     
+        arr = np.multiply(np.maximum.reduce(shift_9(arr)), arg)     
         if np.array_equal(save.astype(int), arr.astype(int)):
             go = False
         # print('itter in lines_uneque_int',itter)
@@ -449,7 +450,7 @@ def distance_std(bitmask):
 
 #removes small lines from bitmask
 #takes bitmask shape (n,n) returns bitmask with all inner lines bigger then arg=min_pixels
-def remove_small_lines(arr_arg,min_pixels,lines_id=0,lines_unique=False):
+def remove_small_lines_old(arr_arg,min_pixels,lines_id=0,lines_unique=False):
     if lines_id == 0:
         arr = ~arr_arg.copy().astype(int)
     else:
@@ -470,6 +471,17 @@ def remove_small_lines(arr_arg,min_pixels,lines_id=0,lines_unique=False):
 
     if lines_id == 0:
         arr = ~arr
+    return arr
+
+#removes small lines from bitmask
+#takes bitmask shape (n,n) returns bitmask with all inner lines bigger then arg=min_pixels
+def remove_small_lines(arr_arg,min_pixels,blank_id=0,lines_unique=True):
+    arr = arr_arg.copy()
+    if not lines_unique:
+        arr = lines_unique_int(arr)
+    for i in np.unique(arr):
+        if np.size(arr[arr==i]) < min_pixels:
+            arr[arr==i ] = blank_id
     return arr
 
 
