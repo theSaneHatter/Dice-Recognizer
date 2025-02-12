@@ -59,29 +59,35 @@ p = [
 ]
 p = np.array(p)
 
-a = np.array(arr,dtype=bool)
+a = np.array(arr)
 print("before\n",c,'\nPost:\n')
-print('std',distance_std(c))
-# print('remove_small_lines',remove_small_lines(a,10,lines_id=1).astype('int'))
 
-# print('remove_small_lines',remove_small_lines(a,10,lines_id=1).astype('int'))
 
-# print('lines_unique_int',lines_unique_int(c))
-# asd = remove_small_lines(c.astype(bool),100)
-# print('remove_small_lines',asd)
-# print(np.sum(asd),np.sum(c))
 
-print('lines_unique_int',lines_unique_int(a))
-print('remove_small_lines2',remove_small_lines2(a,3,lines_unique=False))
+#takes array with each circle a uneque value (whitespace = 0)
+#returns sorted list (n,(value, std))
+#might not work 
+def rank_shapes_as_circles(arr_arg, depth=None):
+    ranks = []
+    ittr = 0
+    for i in np.unique(arr_arg[arr_arg!=0]):
+        bitmask = np.where(arr_arg==i,1,0)
+        to_append = [i, rate_as_circle(bitmask, count=False)]
+        ranks += [to_append]
+        if depth != None:
+            if ittr >= depth:
+                break    
+        ittr+=1
+    
+    ranks = np.array(ranks)
+    ranks = ranks[np.argsort(ranks[:,0])]
+    return ranks
+
+print(rank_shapes_as_circles(a))
+
 
 total_time = time.time() - start
 print(f'\033[32mProcess finished.\nElapsed time: {round(total_time,5)} secends.\033[0m')
 
 
 
-
-'''
-!!!!!!!!!!!!!
-lines_uneque_int doesnt make each value smallest possable! do that!
-
-'''

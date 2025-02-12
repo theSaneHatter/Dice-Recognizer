@@ -275,6 +275,7 @@ def trim_all_blanks(arr,r2=0.01):
     bitmask = trim_blank(arr, r2)
     bitmask = np.transpose(trim_blank(np.transpose(bitmask), r2))
     return bitmask
+
 #turns image into bitmap of edges, shape (a,b)
 def edge_detect(img,buckets=2):
     img = img.convert('HSV')
@@ -483,6 +484,42 @@ def remove_small_lines(arr_arg,min_pixels,blank_id=0,lines_unique=True):
         if np.size(arr[arr==i]) < min_pixels:
             arr[arr==i ] = blank_id
     return arr
+
+#takes bitmask, returns its rateing as a circle
+#input: bitmask. Output: stdm, pixel count
+def rate_as_circle(arr_arg, count=False):
+    std = distance_std(arr_arg)
+    count = np.size(arr_arg[arr_arg==1])
+    if np.size(arr_arg[arr_arg>1]) >0:
+        print(f'\033[31mWorning from rate_as_circle(): arr_arg is not a bitmask. \n    There are {np.size(arr_arg[arr_arg>1])} values that are not zero!\033[0m')
+    if count == True:
+        return std, count
+    else:
+        return std
+
+#takes array with each circle a uneque value (whitespace = 0)
+#returns sorted list (n,(value, std))
+#might not work 
+def rank_shapes_as_circles(arr_arg, depth=None):
+    ranks = []
+    ittr = 0
+    print('unique values:',np.unique(arr_arg))
+    for i in np.unique(arr_arg[arr_arg!=0]):
+        bitmask = np.where(arr_arg==i,1,0)
+        to_append = [i, rate_as_circle(bitmask, count=False)]
+        ranks += [to_append]
+        print(ranks)
+        if depth != None:
+            if ittr >= depth:
+                break    
+        print('i',i)
+        ittr+=1
+    
+    ranks = np.array(ranks)
+    ranks = ranks[np.argsort(ranks[:,1])]
+    print('shape',ranks.shape)
+    # ranks = ranks[::-1]
+    return ranks
 
 
 def ack():

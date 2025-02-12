@@ -9,6 +9,10 @@ start = time.time()
 #purple is ~90,0,70
 #green ~90,115,0
 
+#so bools dont look wierd
+np.set_printoptions(formatter={'float': '{:0.2f}'.format})
+
+
 Dice = Image.open('./assets/Dice_optimal.jpg') 
 
 
@@ -60,9 +64,13 @@ print('unique values:',np.unique(pixels))
 
 pixels = lines_unique_int(~pixels)
 print('unique values:',np.unique(pixels))
+ 
+pixels = remove_small_lines(pixels,50,blank_id=1)
 
-pixels = remove_small_lines(pixels,100,blank_id=1)
+print('rank_shapes_as_circles:\n',rank_shapes_as_circles(pixels))
 
+pixels[pixels[:,:] != 785] == 1
+print('unique values:',np.unique(pixels))
 
 
 # pixels = np.multiply(pixels, 255)
