@@ -68,8 +68,9 @@ print('unique values:',np.unique(pixels))
 pixels = remove_small_lines(pixels,50,blank_id=1)
 
 print('rank_shapes_as_circles:\n',rank_shapes_as_circles(pixels))
+print('eeeee',rank_shapes_as_circles(pixels)[0,0])
 
-pixels[pixels[:,:] != 785] == 1
+pixels[pixels != rank_shapes_as_circles(pixels)[0,0]] = 0
 print('unique values:',np.unique(pixels))
 
 
