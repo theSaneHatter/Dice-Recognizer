@@ -503,7 +503,6 @@ def rate_as_circle(arr_arg, count=False):
 def rank_shapes_as_circles(arr_arg, depth=None):
     ranks = []
     ittr = 0
-    print('unique values:',np.unique(arr_arg))
     for i in np.unique(arr_arg[arr_arg!=0]):
         bitmask = np.where(arr_arg==i,1,0)
         to_append = [i, rate_as_circle(bitmask, count=False)]
@@ -512,14 +511,13 @@ def rank_shapes_as_circles(arr_arg, depth=None):
         if depth != None:
             if ittr >= depth:
                 break    
-        print('i',i)
         ittr+=1
     
     ranks = np.array(ranks)
     ranks = ranks[np.argsort(ranks[:,1])]
-    print('shape',ranks.shape)
     # ranks = ranks[::-1]
     return ranks
+
 
 
 def ack():

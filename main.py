@@ -13,7 +13,7 @@ start = time.time()
 np.set_printoptions(formatter={'float': '{:0.2f}'.format})
 
 
-Dice = Image.open('./assets/Dice_optimal.jpg') 
+Dice = Image.open('./assets/Dice4.jpg') 
 
 
 
@@ -59,26 +59,25 @@ pixels = edge_detect(Dice,buckets=2)
 # pixels = np.random.randint(0,2,(30,33))
 
 pixels = trim_all_blanks(pixels)
-print('unique values:',np.unique(pixels))
 
 
 pixels = lines_unique_int(~pixels)
-print('unique values:',np.unique(pixels))
  
 pixels = remove_small_lines(pixels,50,blank_id=1)
 
-print('rank_shapes_as_circles:\n',rank_shapes_as_circles(pixels))
-print('eeeee',rank_shapes_as_circles(pixels)[0,0])
 
-pixels[pixels != rank_shapes_as_circles(pixels)[0,0]] = 0
-print('unique values:',np.unique(pixels))
+ranked = rank_shapes_as_circles(pixels)
+ranked = ranked[ranked[:,1] < 1]
+pixels[~np.isin(pixels,ranked[:,0])] = 0
+
+print(f'\033[32mAnd the number on the dice is: {np.size(np.unique(pixels)) -1}\033[0m')
 
 
 # pixels = np.multiply(pixels, 255)
-Dice = Image.fromarray(pixels)
+# Dice = Image.fromarray(pixels)
 #grayscale 
 # Dice = Dice.resize()
-Dice.show()
+# Dice.show()
 
 
 
