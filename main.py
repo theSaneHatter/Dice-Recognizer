@@ -41,22 +41,8 @@ size = (h,w)
 Dice = Dice.resize(size)
 
 
-
-
-# We have edge detection!
-
-# If the die non-pip and the background, edge detection can find only the pips if we use just two buckets.
-# This is great!
-# But if there are more than one die, and they are close, how do we differentate the dice?
-# We can do edge detection with like 30 buckets to get edges where the dice are
-# and then find what columns and rows we need to split on.
-# Then use those to split the two bucket bitmap.
-
-
-
 pixels = edge_detect(Dice,buckets=2)
 
-# pixels = np.random.randint(0,2,(30,33))
 
 pixels = trim_all_blanks(pixels)
 
@@ -75,7 +61,6 @@ print(f'\033[32mAnd the number on the dice is: {np.size(np.unique(pixels)) -1}\0
 
 # pixels = np.multiply(pixels, 255)
 # Dice = Image.fromarray(pixels)
-#grayscale 
 # Dice = Dice.resize()
 # Dice.show()
 

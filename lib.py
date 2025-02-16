@@ -499,7 +499,6 @@ def rate_as_circle(arr_arg, count=False):
 
 #takes array with each circle a uneque value (whitespace = 0)
 #returns sorted list (n,(value, std))
-#might not work 
 def rank_shapes_as_circles(arr_arg, depth=None):
     ranks = []
     ittr = 0
