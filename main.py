@@ -2,9 +2,6 @@ from PIL import Image, ImageDraw, ImageEnhance
 import PIL.Image
 from lib import *
 import numpy as np
-import math
-from scipy import stats
-import cv2
 start = time.time()
 #purple is ~90,0,70
 #green ~90,115,0
@@ -12,8 +9,8 @@ start = time.time()
 #so bools dont look wierd
 np.set_printoptions(formatter={'float': '{:0.2f}'.format})
 
-
-Dice = Image.open('./assets/Dice4.jpg') 
+path = './assets/Dice4.jpg'
+Dice = Image.open(path) 
 
 
 

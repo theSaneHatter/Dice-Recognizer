@@ -56,7 +56,6 @@ def sort_by_brightness(image):
     sorted_pixels = pixels_1d[indices]
     sorted_image_array = sorted_pixels.reshape(pixels.shape)
     sorted_image = Image.fromarray(sorted_image_array)
-    print(sorted_pixels)
     return sorted_image
 
 
@@ -164,7 +163,6 @@ def give_pixels_location(pixels, remove=False):
         #('shape var: ', shapeprint)
         pixels_w_o_location = np.zeros(math.prod(shape), dtype=np.uint8)
         pixels_w_o_location = pixels_w_o_location.reshape(pixels.shape[0], pixels.shape[1], 3)
-        #print('shape: ', pixels_w_o_location.shape)
         pixels_w_o_location[:,:,:] = pixels[:,:,:3]
         return pixels_w_o_location
 
@@ -414,7 +412,6 @@ def lines_unique_int(arr_arg):
         arr = np.multiply(np.maximum.reduce(shift_9(arr)), arg)     
         if np.array_equal(save.astype(int), arr.astype(int)):
             go = False
-        # print('itter in lines_uneque_int',itter)
     if top_sum + bottom_sum != 0:
         arr = arr[1:-1,1:-1]
 
@@ -462,12 +459,9 @@ def remove_small_lines_old(arr_arg,min_pixels,lines_id=0,lines_unique=False):
     
 
     max_ = np.max(arr)
-    print('max_',max_)
     for i in range(1,max_+1):
         if np.size(arr[arr==i]) < min_pixels:
             arr[arr==i] = 0
-            print('number:',i)
-            print('occurances:',np.size(arr[arr==i]))
     arr[arr>0] = 1
 
     if lines_id == 0:
@@ -506,7 +500,6 @@ def rank_shapes_as_circles(arr_arg, depth=None):
         bitmask = np.where(arr_arg==i,1,0)
         to_append = [i, rate_as_circle(bitmask, count=False)]
         ranks += [to_append]
-        print(ranks)
         if depth != None:
             if ittr >= depth:
                 break    
