@@ -9,8 +9,11 @@ start = time.time()
 #purple is ~90,0,70
 #green ~90,115,0
 
-Dice = Image.open('./assets/Dice_optimal.jpg') 
+#so bools dont look wierd
+np.set_printoptions(formatter={'float': '{:0.2f}'.format})
 
+
+Dice = Image.open('./assets/Dice4.jpg') 
 
 
 
@@ -30,9 +33,10 @@ Dice = brightness.enhance(1)
 # resize 
 print(Dice.size)
 h,w = Dice.size
-d = 1
+d = 5
 h,w = round(h/d),round(w/d)
-print('new size' , h,w)
+print('new size', h,w)
+time.sleep(2)
 size = (h,w)
 Dice = Dice.resize(size)
 
@@ -50,15 +54,30 @@ Dice = Dice.resize(size)
 
 
 
-
 pixels = edge_detect(Dice,buckets=2)
+
+# pixels = np.random.randint(0,2,(30,33))
+
 pixels = trim_all_blanks(pixels)
-pixels = np.multiply(pixels, 255)
-Dice = Image.fromarray(pixels)
+
+
+pixels = lines_unique_int(~pixels)
+ 
+pixels = remove_small_lines(pixels,50,blank_id=1)
+
+
+ranked = rank_shapes_as_circles(pixels)
+ranked = ranked[ranked[:,1] < 1]
+pixels[~np.isin(pixels,ranked[:,0])] = 0
+
+print(f'\033[32mAnd the number on the dice is: {np.size(np.unique(pixels)) -1}\033[0m')
+
+
+# pixels = np.multiply(pixels, 255)
+# Dice = Image.fromarray(pixels)
 #grayscale 
 # Dice = Dice.resize()
-Dice.show()
-
+# Dice.show()
 
 
 total_time = time.time() - start

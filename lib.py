@@ -275,6 +275,7 @@ def trim_all_blanks(arr,r2=0.01):
     bitmask = trim_blank(arr, r2)
     bitmask = np.transpose(trim_blank(np.transpose(bitmask), r2))
     return bitmask
+
 #turns image into bitmap of edges, shape (a,b)
 def edge_detect(img,buckets=2):
     img = img.convert('HSV')
@@ -365,11 +366,10 @@ def shift_9(arr_arg):
                     ])
     return out        
 
-
 #takes bitmap and gives all lines uneque int
 #currently could do with some optomization: it reappilies some fns sometimes
 def list_max(arr_arg):
-    arr = arr_arg.copy()
+    arr = arr_arg.copy().astype(int)
     
     top_sum = np.sum(arr[(0,-1),:])
     bottom_sum = np.sum(arr[:,(0,-1)])
@@ -386,6 +386,35 @@ def list_max(arr_arg):
         if np.array_equal(save, arr):
             go = False
 
+    if top_sum + bottom_sum != 0:
+        arr = arr[1:-1,1:-1]
+
+    return arr
+
+#takes bitmap and gives all lines uneque int
+#currently could do with some optomization: it reappilies some fns sometimes
+def lines_unique_int(arr_arg):
+    arr = arr_arg.copy().astype(int)
+    
+    top_sum = np.sum(arr[(0,-1),:])
+    bottom_sum = np.sum(arr[:,(0,-1)])
+
+    if top_sum + bottom_sum != 0:
+        arr = np.pad(arr,1)
+
+    # arr = trues_unique_int(arr)
+
+    arg = arr.copy()
+    arr = trues_unique_int(arr)
+    itter = 0
+    go = True
+    while go:
+        itter += 1
+        save = arr
+        arr = np.multiply(np.maximum.reduce(shift_9(arr)), arg)     
+        if np.array_equal(save.astype(int), arr.astype(int)):
+            go = False
+        # print('itter in lines_uneque_int',itter)
     if top_sum + bottom_sum != 0:
         arr = arr[1:-1,1:-1]
 
@@ -419,6 +448,77 @@ def distance_std(bitmask):
     Ds = np.sqrt( np.add(np.subtract(Xs,Cx)**2, np.subtract(Ys,Cy)**2))
     std = np.std(Ds)
     return std
+
+#removes small lines from bitmask
+#takes bitmask shape (n,n) returns bitmask with all inner lines bigger then arg=min_pixels
+def remove_small_lines_old(arr_arg,min_pixels,lines_id=0,lines_unique=False):
+    if lines_id == 0:
+        arr = ~arr_arg.copy().astype(int)
+    else:
+        arr = arr_arg.copy().astype(int)
+
+    if lines_unique == False:
+        arr = lines_unique_int(arr).astype(int)
+    
+
+    max_ = np.max(arr)
+    print('max_',max_)
+    for i in range(1,max_+1):
+        if np.size(arr[arr==i]) < min_pixels:
+            arr[arr==i] = 0
+            print('number:',i)
+            print('occurances:',np.size(arr[arr==i]))
+    arr[arr>0] = 1
+
+    if lines_id == 0:
+        arr = ~arr
+    return arr
+
+#removes small lines from bitmask
+#takes bitmask shape (n,n) returns bitmask with all inner lines bigger then arg=min_pixels
+def remove_small_lines(arr_arg,min_pixels,blank_id=0,lines_unique=True):
+    arr = arr_arg.copy()
+    if not lines_unique:
+        arr = lines_unique_int(arr)
+    for i in np.unique(arr):
+        if np.size(arr[arr==i]) < min_pixels:
+            arr[arr==i ] = blank_id
+    return arr
+
+#takes bitmask, returns its rateing as a circle
+#input: bitmask. Output: stdm, pixel count
+def rate_as_circle(arr_arg, count=False):
+    std = distance_std(arr_arg)
+    count = np.size(arr_arg[arr_arg==1])
+    if np.size(arr_arg[arr_arg>1]) >0:
+        print(f'\033[31mWorning from rate_as_circle(): arr_arg is not a bitmask. \n    There are {np.size(arr_arg[arr_arg>1])} values that are not zero!\033[0m')
+    if count == True:
+        return std, count
+    else:
+        return std
+
+#takes array with each circle a uneque value (whitespace = 0)
+#returns sorted list (n,(value, std))
+#might not work 
+def rank_shapes_as_circles(arr_arg, depth=None):
+    ranks = []
+    ittr = 0
+    for i in np.unique(arr_arg[arr_arg!=0]):
+        bitmask = np.where(arr_arg==i,1,0)
+        to_append = [i, rate_as_circle(bitmask, count=False)]
+        ranks += [to_append]
+        print(ranks)
+        if depth != None:
+            if ittr >= depth:
+                break    
+        ittr+=1
+    
+    ranks = np.array(ranks)
+    ranks = ranks[np.argsort(ranks[:,1])]
+    # ranks = ranks[::-1]
+    return ranks
+
+
 
 def ack():
     print(f'yo {__name__} been imported!')
