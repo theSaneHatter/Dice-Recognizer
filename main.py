@@ -1,5 +1,4 @@
 from PIL import Image, ImageDraw, ImageEnhance
-import PIL.Image
 from lib import *
 import numpy as np
 start = time.time()
@@ -9,10 +8,10 @@ start = time.time()
 #so bools dont look wierd
 np.set_printoptions(formatter={'float': '{:0.2f}'.format})
 
-path = './assets/Dice4.jpg'
+path = './assets/Dice1.jpg'
+# path = './assets/Dice2.jpg'
+
 Dice = Image.open(path) 
-
-
 
 #sharpness 
 sharpness = ImageEnhance.Sharpness(Dice)
@@ -21,11 +20,12 @@ Dice = sharpness.enhance(1)
 #contrast 
 contrast = ImageEnhance.Contrast(Dice)
 Dice = contrast.enhance(1)
-# Dice.show()
+
 
 #brightness
 brightness = ImageEnhance.Brightness(Dice)
 Dice = brightness.enhance(1)
+
 
 # resize 
 print(Dice.size)
@@ -37,19 +37,27 @@ time.sleep(2)
 size = (h,w)
 Dice = Dice.resize(size)
 
+Dice.show()
 
-pixels = edge_detect(Dice,buckets=2)
+pixels = edge_detect(Dice,buckets=4)
 
 
-pixels = trim_all_blanks(pixels)
+
+# pixels = trim_all_blanks(pixels)
 
 
 pixels = lines_unique_int(~pixels)
  
-pixels = remove_small_lines(pixels,50,blank_id=1)
+removel_size = round((np.average(pixels.shape))*0.08) 
+print('removel_size',removel_size)
+removel_size = 50 
+pixels = remove_small_lines(pixels,removel_size,blank_id=1)
 
+Dice = Image.fromarray(pixels)
+Dice.show()
 
 ranked = rank_shapes_as_circles(pixels)
+std_bar = 3
 ranked = ranked[ranked[:,1] < 1]
 pixels[~np.isin(pixels,ranked[:,0])] = 0
 
@@ -57,9 +65,9 @@ print(f'\033[32mAnd the number on the dice is: {np.size(np.unique(pixels)) -1}\0
 
 
 # pixels = np.multiply(pixels, 255)
-# Dice = Image.fromarray(pixels)
+Dice = Image.fromarray(pixels)
 # Dice = Dice.resize()
-# Dice.show()
+Dice.show()
 
 
 total_time = time.time() - start

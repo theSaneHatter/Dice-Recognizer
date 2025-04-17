@@ -510,7 +510,13 @@ def rank_shapes_as_circles(arr_arg, depth=None):
     # ranks = ranks[::-1]
     return ranks
 
-# theres a silly comment
+
+def PR():
+    print(f'\033[4mDice Recognizer\033[0m')
+    dice_picture_path = input("Enter Picture of dice:")
+    buckets = input('Enter number of buckets to use:')
+    std = int(input('Enter standerd devation for dice:S'))
+
 
 def ack():
     print(f'yo {__name__} been imported!')
