@@ -510,12 +510,44 @@ def rank_shapes_as_circles(arr_arg, depth=None):
     # ranks = ranks[::-1]
     return ranks
 
+def count_pips(image_path, buckets=4,removal_size=50,std_bar=1,time_myself=False, show_processing=True, resizement=5):
+    start = time.time()
+
+    Dice = Image.open(image_path)
+    # resize
+    h,w = Dice.size
+    h,w = round(h/resizement),round(w/resizement)
+    size = (h,w)
+    Dice = Dice.resize(size)
+
+    pixels = edge_detect(Dice, buckets=buckets)
+    pixels = lines_unique_int(~pixels)
+    pixels = remove_small_lines(pixels, removal_size, blank_id=1)
+    if show_processing:
+        Dice = Image.fromarray(pixels)
+        Dice.show()
+    ranked = rank_shapes_as_circles(pixels)
+    ranked = ranked[ranked[:,1] < std_bar]
+    pixels[~np.isin(pixels,ranked[:,0])] = 0
+    pips_count = np.size(np.unique(pixels)) -1
+    if time_myself:
+        print(f'Took {time.time()-start}s to process image')
+    if show_processing:
+        Dice = Image.fromarray(pixels)
+        Dice.show()
+    return pips_count
+
 
 def PR():
     print(f'\033[4mDice Recognizer\033[0m')
-    dice_picture_path = input("Enter Picture of dice:")
-    buckets = input('Enter number of buckets to use:')
-    std = int(input('Enter standerd devation for dice:S'))
+    dice_picture_path = input("Enter Picture of dice path:")
+    buckets = int(input('Enter number of buckets to use (4 useally works):'))
+    std = int(input('Enter standerd devation for dice pipes (1 useally works):'))
+    time_myself = (input("Time image processing time? y/n:") == 'y')
+    removal_size = int(input('Enter small lines size (50 useally works):'))
+    
+
+
 
 
 def ack():

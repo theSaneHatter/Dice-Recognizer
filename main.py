@@ -10,7 +10,7 @@ np.set_printoptions(formatter={'float': '{:0.2f}'.format})
 
 path = './assets/Dice1.jpg'
 # path = './assets/Dice2.jpg'
-
+'''
 Dice = Image.open(path) 
 
 #sharpness 
@@ -39,6 +39,7 @@ Dice = Dice.resize(size)
 
 Dice.show()
 
+
 pixels = edge_detect(Dice,buckets=4)
 
 
@@ -48,8 +49,6 @@ pixels = edge_detect(Dice,buckets=4)
 
 pixels = lines_unique_int(~pixels)
  
-removel_size = round((np.average(pixels.shape))*0.08) 
-print('removel_size',removel_size)
 removel_size = 50 
 pixels = remove_small_lines(pixels,removel_size,blank_id=1)
 
@@ -57,8 +56,8 @@ Dice = Image.fromarray(pixels)
 Dice.show()
 
 ranked = rank_shapes_as_circles(pixels)
-std_bar = 3
-ranked = ranked[ranked[:,1] < 1]
+std_bar = 1
+ranked = ranked[ranked[:,1] < std_bar]
 pixels[~np.isin(pixels,ranked[:,0])] = 0
 
 print(f'\033[32mAnd the number on the dice is: {np.size(np.unique(pixels)) -1}\033[0m')
@@ -68,10 +67,15 @@ print(f'\033[32mAnd the number on the dice is: {np.size(np.unique(pixels)) -1}\0
 Dice = Image.fromarray(pixels)
 # Dice = Dice.resize()
 Dice.show()
+'''
+
+count_pips(path, time_myself=True)
 
 
 total_time = time.time() - start
 print(f'\033[32mProcess finished.\nElapsed time: {round(total_time,5)} secends.\033[0m')
+
+
 
 
 
