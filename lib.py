@@ -514,6 +514,7 @@ def count_pips(image_path, buckets=4,removal_size=50,std_bar=1,time_myself=False
     start = time.time()
 
     Dice = Image.open(image_path)
+    Dice.show()
     # resize
     h,w = Dice.size
     h,w = round(h/resizement),round(w/resizement)
@@ -531,7 +532,7 @@ def count_pips(image_path, buckets=4,removal_size=50,std_bar=1,time_myself=False
     pixels[~np.isin(pixels,ranked[:,0])] = 0
     pips_count = np.size(np.unique(pixels)) -1
     if time_myself:
-        print(f'Took {time.time()-start}s to process image')
+        print(f'It took {time.time()-start} secs to process image')
     if show_processing:
         Dice = Image.fromarray(pixels)
         Dice.show()
@@ -541,13 +542,15 @@ def count_pips(image_path, buckets=4,removal_size=50,std_bar=1,time_myself=False
 def PR():
     print(f'\033[4mDice Recognizer\033[0m')
     dice_picture_path = input("Enter Picture of dice path:")
-    buckets = int(input('Enter number of buckets to use (4 useally works):'))
-    std = int(input('Enter standerd devation for dice pipes (1 useally works):'))
-    time_myself = (input("Time image processing time? y/n:") == 'y')
-    removal_size = int(input('Enter small lines size (50 useally works):'))
-    
-
-
+    buckets = int(input('Enter number of buckets to use (default 4):') or 4) 
+    std = int(input('Enter standerd devation for dice pipes (default 1):') or 1)
+    time_myself = input("Time image processing time (y/n)?:") == 'y'
+    removal_size = int(input('Enter small lines size (default 50):') or 50)
+    show_processing = input("show processing (y/n)?:") == "y"
+    resizment = int(input('Resizment (default 5):') or 5)
+    print('processing image...') 
+    out = count_pips(dice_picture_path, buckets=buckets, removal_size=removal_size, std_bar=std, time_myself=time_myself, show_processing=show_processing, resizement=resizment)
+    return f'\033[33mnumber of pips on dice: {out}\033[0m'
 
 
 def ack():

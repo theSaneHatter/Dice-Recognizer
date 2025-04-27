@@ -10,7 +10,7 @@ np.set_printoptions(formatter={'float': '{:0.2f}'.format})
 
 path = './assets/Dice1.jpg'
 # path = './assets/Dice2.jpg'
-'''
+
 Dice = Image.open(path) 
 
 #sharpness 
@@ -33,13 +33,13 @@ h,w = Dice.size
 d = 5
 h,w = round(h/d),round(w/d)
 print('new size', h,w)
-time.sleep(2)
 size = (h,w)
 Dice = Dice.resize(size)
 
-Dice.show()
+# Dice.show()
 
 
+'''
 pixels = edge_detect(Dice,buckets=4)
 
 
@@ -68,8 +68,7 @@ Dice = Image.fromarray(pixels)
 # Dice = Dice.resize()
 Dice.show()
 '''
-
-count_pips(path, time_myself=True)
+print(print(PR()))
 
 
 total_time = time.time() - start
