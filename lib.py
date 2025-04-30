@@ -67,30 +67,6 @@ def shift_9(arr_arg):
                     ])
     return out        
 
-#takes bitmap and gives all lines uneque int
-#currently could do with some optomization: it reappilies some fns sometimes
-def list_max(arr_arg):
-    arr = arr_arg.copy().astype(int)
-    
-    top_sum = np.sum(arr[(0,-1),:])
-    bottom_sum = np.sum(arr[:,(0,-1)])
-    if top_sum + bottom_sum != 0:
-        arr = np.pad(arr,1)
-
-    arg = arr.copy()
-
-    go = True
-    while go:
-        save = arr
-        arr = np.multiply(np.maximum.reduce(shift_9(trues_unique_int(arr))), arg)     
-        
-        if np.array_equal(save, arr):
-            go = False
-
-    if top_sum + bottom_sum != 0:
-        arr = arr[1:-1,1:-1]
-
-    return arr
 
 #takes bitmap and gives all lines uneque int
 #currently could do with some optomization: it reappilies some fns sometimes
@@ -102,8 +78,6 @@ def lines_unique_int(arr_arg):
 
     if top_sum + bottom_sum != 0:
         arr = np.pad(arr,1)
-
-    # arr = trues_unique_int(arr)
 
     arg = arr.copy()
     arr = trues_unique_int(arr)
@@ -146,27 +120,6 @@ def distance_std(bitmask):
     std = np.std(Ds)
     return std
 
-#removes small lines from bitmask
-#takes bitmask shape (n,n) returns bitmask with all inner lines bigger then arg=min_pixels
-def remove_small_lines_old(arr_arg,min_pixels,lines_id=0,lines_unique=False):
-    if lines_id == 0:
-        arr = ~arr_arg.copy().astype(int)
-    else:
-        arr = arr_arg.copy().astype(int)
-
-    if lines_unique == False:
-        arr = lines_unique_int(arr).astype(int)
-    
-
-    max_ = np.max(arr)
-    for i in range(1,max_+1):
-        if np.size(arr[arr==i]) < min_pixels:
-            arr[arr==i] = 0
-    arr[arr>0] = 1
-
-    if lines_id == 0:
-        arr = ~arr
-    return arr
 
 #removes small lines from bitmask
 #takes bitmask shape (n,n) returns bitmask with all inner lines bigger then arg=min_pixels
@@ -207,7 +160,7 @@ def rank_shapes_as_circles(arr_arg, depth=None):
     
     ranks = np.array(ranks)
     ranks = ranks[np.argsort(ranks[:,1])]
-    # ranks = ranks[::-1]
+    
     return ranks
 
 # takes image path and returns the number of pips it sees
@@ -216,7 +169,7 @@ def count_pips(image_path, buckets=4,removal_size=50,std_bar=1,time_myself=False
 
     Dice = Image.open(image_path)
     Dice.show()
-    # resize
+    
     h,w = Dice.size
     h,w = round(h/resizement),round(w/resizement)
     size = (h,w)
@@ -240,7 +193,6 @@ def count_pips(image_path, buckets=4,removal_size=50,std_bar=1,time_myself=False
     return pips_count
 
 #communacates with the user to process dice image. 
-#
 def PR():
     print(f'\033[4mDice Recognizer\033[0m')
     dice_picture_path = input("Enter Picture of dice path:")
@@ -253,7 +205,6 @@ def PR():
     print('processing image...') 
     out = count_pips(dice_picture_path, buckets=buckets, removal_size=removal_size, std_bar=std, time_myself=time_myself, show_processing=show_processing, resizement=resizment)
     return f'\033[33mnumber of pips on dice: {out}\033[0m'
-
 
 def ack():
     print(f'yo {__name__} been imported!')
